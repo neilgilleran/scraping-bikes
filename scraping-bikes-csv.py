@@ -34,10 +34,10 @@ def create_network_list():
 #base url, we will append the network for the full address
 base_url = 'https://api.citybik.es/v2/networks/'
 #this query will get the data we require
-jq_query = " .network.stations[] | [  .name, .empty_slots, .free_bikes, .extra.status , .extra.slots]"
+jq_query = " .network.stations[] | [  .timestamp, .name, .empty_slots, .free_bikes, .extra.status , .extra.slots]"
 #this wait time is used when we dont want to flood the server with requests
 WAIT_TIME = 5
-#we use this timestamp for the file name and also a column entry
+#we use this timestamp for the file name
 DATE_TIME = datetime.now().strftime('%Y-%m-%d_%H-%M')
 print(DATE_TIME)
 
@@ -48,7 +48,7 @@ networks = create_network_list()
 bike_loop = pd.DataFrame()
 
 #the column names we need
-column_names = ['station','slots','bikes','status','total']
+column_names = ['timestamp','station','slots','bikes','status','total']
 
 """ used this to debug the following loop networks =['dublinbikes'] """
 
@@ -66,7 +66,10 @@ for network in networks:
   
   df_network = pd.DataFrame(compressed_json, columns=column_names)
   df_network['network'] = network
-  df_network['datetime'] = str(DATE_TIME)
+
+  #TODO actually i need to get the timestamp from the API as this is localised. 
+  # i will skew all the data is I apply the scrapetime as the timestamp
+  #df_network['datetime'] = str(DATE_TIME)
   
   bike_loop = bike_loop.append(df_network,ignore_index=True)
 

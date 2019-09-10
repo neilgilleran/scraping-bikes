@@ -55,8 +55,12 @@ column_names = ['timestamp','station','slots','bikes','status','total']
 #setting up the filename
 filename = 'all_citybikes_data_'+DATE_TIME+'.csv'
 
+#need to wait every so often so we don't get a 429 error
+i = len(networks)
+
 for network in networks:
   print("Scraping: ", network)
+  print(i)
   url = base_url+network
   
   with urllib.request.urlopen(url) as url:
@@ -72,6 +76,11 @@ for network in networks:
   #df_network['datetime'] = str(DATE_TIME)
   
   bike_loop = bike_loop.append(df_network,ignore_index=True)
+
+  i = i - 1
+  if i %10 == 0:
+    print("Wait for: ", WAIT_TIME)
+    time.sleep(WAIT_TIME)
 
 try:  
   print("Creating: ", filename)

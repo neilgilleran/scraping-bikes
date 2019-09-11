@@ -16,6 +16,7 @@ import pandas as pd
 from datetime import datetime
 import time
 import requests
+import urllib
 
 #this will create a list of networks availalbe on the API
 def create_network_list():
